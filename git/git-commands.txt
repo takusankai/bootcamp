@@ -1,0 +1,69 @@
+[以下の git command を理解する]
+
+- clone
+リモートリポジトリをローカルに複製するコマンド。
+github上に上がっている開発状況や優れたツールなどをまず取って来る。
+
+- branch
+現在のブランチ状況の確認のコマンド。-aオプションを付けると情報がリッチになる。
+引数を指定すると現在のHEADから、指定した引数を名前として、新しいブランチを作成する。
+
+- checkout
+ブランチの切り替えのコマンド。ヘッドを切り替える。-bオプションで新規ブランチを作成しつつ、そこに切り替えることもできる。
+加えて、checkoutという名前が示すように変更の取り消し機能も持っている。--の後に取り消す変更ファイルを指定する。
+2019年8月にgit switchという切り替えコマンドが新しく追加された。ブランチ切り替えはこちらでやるのが分かりやすいかもしれない。
+
+- log
+Gitのコミット履歴を参照する際に使うコマンド。コミット履歴全てが出てくるので、logが長くなりがちである。実行停止にはqを押す。
+--onelineは1行で表示してくれて見やすい。--grepで指定した文字列を含むコミットのみ検索できる。-n xで個数を指定できる。
+
+- status
+現在の状況を確認するコマンド。ファイルの追加・修正やステージの状況が分かる。
+コミットすると、nothing to commit, working tree clean(コミットするものは何もない)となる。
+-sオプションでM変更、A追加、D削除、R名変更という簡易表記になる。
+
+- add
+インデックスに登録するコマンド。add .やadd -uのようにまとめて登録して、毎回面倒だなーと思うのはダサいらしい。
+「ひとつのコミットには主題となる変更とは無関係な変更を含めない」の実現のためにステージ機構を上手く利用する。
+
+- commit
+インデックス登録された変更をローカルリポジトリに反映させるコマンド。-m "comment"でコメント登録するのが分かりやすい。
+
+- diff
+基本動作は作業ツリーに行われた変更の表示を行うコマンド。インデックスとの差分を見たり（引数無し）、最新のコミットとの差分を見たり（引数HEAD）することができる。
+他にもコミットAとコミットBなど、指定した2点の差分が出せる。--name-onlyで変更があったファイル名だけ表示する。
+
+- push
+ローカルリポジトリのコミット履歴をリモートリポジトリに送信して更新するコマンド。
+git resetで直前の変更は取り消せる。git log リポジトリ名/リモートのブランチ名..ローカルのブランチ名　と打てば未pushのコミットを調べられる。
+
+- pull
+git fetch とgit merge の両方の処理内容を同時に行うコマンド。リモート→ローカルを一気にやる。
+git fetchと違ってmergeまで行うのでコンフリクトなどに気を付ける。それぞれの詳細は以下の項に書く。
+
+- fetch
+リモートリポジトリの最新の履歴の取得だけを行うコマンド。リモートから最新情報を「origin/master」ブランチに取り込む。
+mergeする前なのでエラーがあっても、git reset --hard HEADで直前のcommitに戻せば大丈夫。
+
+- merge
+独立したブランチをひとつにまとめるコマンド。ブランチでの作業内容を反映させたいときに使う。
+マージは常にうまくいくとは限らず、同じファイルの同じ部分をふたつのブランチで別々に変更してそれをマージしようとするとコンフリクトとなる。
+その場合はgit statusでどのファイルがコンフリクトしたかを調べ、地道にコンフリクトを回避する。
+またそもそもコンフリクトを回避する開発の仕方を考えるようにする。
+
+
+
+(参考リンク先)
+「git branch コマンド」、qiita、https://qiita.com/chihiro/items/e178e45a7fd5a2fb4599
+「チェックアウト(checkout)とは？使い方を基礎から解説！」、侍エンジニア、https://www.sejuku.net/blog/71457
+「gitコマンド checkoutとswitchの違い　～これからはswitchを使おう～」、Snow System、https://snowsystem.net/git/git-command/git-switch/
+「「git log」コマンドの使い方・活用」、カゴヤのサーバー研究室、https://www.kagoya.jp/howto/rentalserver/webtrend/gitlog/
+「はじめてのGit！git statusで変更内容を確認する方法」、侍エンジニア、https://www.sejuku.net/blog/71857
+「ステージを理解して git をもっと便利に使う」、誰得UNIX、https://daretoku-unix.blogspot.com/2009/08/git.html
+「git diff を徹底攻略！よく使うオプションまとめ」、wwwcreaters、https://www-creators.com/archives/755#git_diff
+「git push originコマンドでリモートリポジトリにコードをpushしよう」、エンベーダー、https://envader.plus/course/5/scenario/1056
+「git pullコマンドについて解説」、tech mania、https://techmania.jp/blog/git0002/
+「【初心者向け】git fetch、git merge、git pullの違いについて」、qiita、https://qiita.com/wann/items/688bc17460a457104d7d
+「リモートリポジトリ fetch」、サル先生のgit入門、https://backlog.com/ja/git-tutorial/stepup/15/
+「ブランチとマージについて　まとめ」、エンベーダー、https://envader.plus/course/5/scenario/1062
+「(公式)Reference」、git-scm、https://git-scm.com/docs/
