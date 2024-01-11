@@ -1,0 +1,19 @@
+[github の pull request (プルリクエスト) を理解する]
+
+pull requestとは、オンライン上のレポジトリを更新した際に、他にもレポジトリ編集者がいる場合に、その編集内容を受け取って(pull)くださいというリクエストを出すこと。
+他の開発者の方に見て貰って（レビュー）問題が無ければマージする。
+
+github上で緑色のCompare & pull requestボタンをクリックすることで作成できる。
+他にもCLIやアプリケーションなどから作る方法もあり、公式ドキュメントに紹介されている。
+タイトルとコメントを適切に行う。内容、レビューしてもらいたいこと、備考などを項目建てて書くと良さそう。
+
+大切なのは、どこを何故直したのか？のような送った側の意図をレビューする側が理解できることである。
+またTRYOUTスプレッドシートにもあるが、差分の粒度にも気を配る。趣旨を決め、それに逸れた変更は含めない。
+
+
+
+(参考リンク先)
+qiita、「初心者向けGithubへのPullRequest方法」、https://qiita.com/samurai_runner/items/7442521bce2d6ac9330b
+qiita、「みんなが幸せになれるPullRequestの作り方を考えてみた」、https://qiita.com/marumaru0113/items/c53db580b812f8f6d4da
+qiita、「GithubのPullRequest作成時のコメントで気をつけていること」、https://qiita.com/matsumana07384/items/5aecbcd228a98394b3fe
+Github Docs、「pull request の作成」、https://docs.github.com/ja/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request
