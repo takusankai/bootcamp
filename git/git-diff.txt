@@ -1,0 +1,17 @@
+[最終コミットと現状を比較し、差分を取ることができるようにする]
+
+まず、gitで2つのcommit間の差分を出力コマンドは以下である。
+git diff <コミットID1> <コミットID2>
+
+これに対して、現在のブランチの状態から特定のコミットまでの差分比較であればコミットIDを一つだけ指定すればよい。
+git diff <コミットID1>
+
+「HEAD」が現在のブランチの先頭のコミットへの参照なので、以下が最終コミットと現状の差分の取り方である。
+git diff HEAD
+
+
+
+(参考リンク先)
+qiita、「gitでcommit間の差分を出力する」、https://qiita.com/kasyuu/items/bc8489831e200b641456
+WWWクリエイターズ、「git diff を徹底攻略！よく使うオプションまとめ」、https://www-creators.com/archives/755#i
+git-scm、「(公式)git-diff」、https://git-scm.com/docs/git-diff
