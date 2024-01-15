@@ -5,5 +5,5 @@ fi
 
 if [ $1 == "ng" ]
 then
-  echo "error: your input is ng" >&2 > ng.txt
+  cd non-existent 2> ng.txt
 fi
