@@ -1,13 +1,8 @@
-echo 'echo `$PATH.sh`で呼ぶ方法'
-link=`./calling-B.sh`
-echo $link
-echo "B_Number is" ${B_Number}
-
 echo 'bashコマンドで呼ぶ方法'
 bash ./calling-B.sh
-echo "B_Number is" ${B_Number}
+echo "b_number is" ${b_number}
 
-# この方法のみ、B_Numberが2024と表示される
+# この方法のみ、b_numberが2024と表示される
 echo 'sourceコマンドで呼ぶ方法'
 source ./calling-B.sh
-echo "B_Number is" ${B_Number}
+echo "b_number is" ${b_number}

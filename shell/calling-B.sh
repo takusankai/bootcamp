@@ -1,2 +1,2 @@
-B_Number=2024
+b_number=2024
 echo 'here is calling-B.sh'
