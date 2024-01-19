@@ -26,24 +26,25 @@ then
 
   # 通常時、references.txtの内容を元にファイルを移動する
 
-  # references.txtの内容を行区切りでlineに読み込み、whileで1行ずつ処理
-  while IFS= read -r line
+  # references.txtの内容を行区切りで読み込み、forで1行ずつ処理
+  for line in $(cat "$REFERENCE_PATH")
   do
 
     # ','で「探す文字列」と「移動先名」に分割
     search_pattern=$(echo "$line" | cut -d',' -f1)
     destination_directory=$(echo "$line" | cut -d',' -f2)
 
-    # カレントディレクトリからsearch_patternをファイル名に含むファイルを探し,whileで1つずつ処理
-    while IFS= read -r file
+    # カレントディレクトリからsearch_patternをファイル名に含むファイルを探し、forで1つずつ処理
+    for file in $(find . -type f -name "*$search_pattern*")
     do
+
       # 見つけたファイルをdestination_directoryに移動し、移動結果を表示
       mv "$file" "./$destination_directory/"
       echo "$file >> $destination_directory"
-      
-    done < <(find . -type f -name "*$search_pattern*")
 
-  done < "$REFERENCE_PATH"
+    done
+
+  done
 
 else
 
