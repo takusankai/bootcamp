@@ -1,13 +1,15 @@
 # 基本のメソッドの戻り値の利用
 def add_numbers(a, b)
   return a + b
+  a - b # この行は実行されない
 end
 result = add_numbers(3, 4)
 puts "#{result}"
 
 # 真偽値を返すメソッド
 def is_even?(number)
-  return number % 2 == 0
+  # 単に値を返すだけならreturnは省略できる
+  number % 2 == 0
 end
 puts "6は偶数？ #{is_even?(6)}"
 puts "7は偶数？ #{is_even?(7)}"
@@ -31,9 +33,9 @@ array = [1, 2, 3]
 array.pop
 puts "変更後の配列: #{array}"
 
-str1 = "hogehoge"
-str1.gsub!("hoge", "fuga")
-puts "変更後の文字列: #{str1}"
+string1 = "hogehoge"
+string1.gsub!("hoge", "fuga")
+puts "変更後の文字列: #{string1}"
 
 # 引数を破壊的に変更する
 def capitalize_string!(string)
