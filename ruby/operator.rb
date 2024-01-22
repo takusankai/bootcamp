@@ -1,11 +1,11 @@
 # 算術演算子
-num1 = 10
-num2 = 5
-addition = num1 + num2  # 足し算
-subtraction = num1 - num2  # 引き算
-multiplication = num1 * num2  # 掛け算
-division = num1 / num2  # 割り算
-modulus = num1 % num2  # 余り
+number1 = 10
+number2 = 5
+addition = number1 + number2  # 足し算
+subtraction = number1 - number2  # 引き算
+multiplication = number1 * number2  # 掛け算
+division = number1 / number2  # 割り算
+modulus = number1 % number2  # 余り
 puts "足し算: #{addition}"
 puts "引き算: #{subtraction}"
 puts "掛け算: #{multiplication}"
@@ -13,9 +13,9 @@ puts "割り算: #{division}"
 puts "余り: #{modulus}"
 
 # 文字列演算子
-str1 = "Hello"
-str2 = "World"
-concatenation = str1 + " " + str2  # 文字列の結合
+string1 = "Hello"
+string2 = "World"
+concatenation = string1 + " " + string2  # 文字列の結合
 puts "文字列の結合: #{concatenation}"
 
 # 代入演算子
@@ -54,11 +54,16 @@ puts "成人か？: #{is_adult}"
 # 論理否定 > べき乗 " ** " > 乗算・除算・剰余 > 加算・減算 > 比較 > 等・不等 > 論理積 > 三項演算子 > 論理和 > 代入
 
 # 論理系の演算子の結合順序の確認
-t1,t2,t3,t4 = true
-result1 = !( t1 == !t2 && t3 || t4 )
+bool1, bool2, bool3, bool4 = true
+result1 = !( bool1 == !bool2 && bool3 || bool4 )
 puts "論理計算結果: #{result1}"
 
+# （追記）論理系の演算子の結合順序の追加確認
+# 上との違いは、bool4に"!"を加えて、実質的にfalseにしている点
+result2 = !( bool1 == !bool2 && bool3 || !bool4 )
+puts "（追記）論理計算結果: #{result2}"
+
 # 算術系の演算子の結合順序の確認
-n1,n2,n3,n4,n5 = 1,2,3,4,5
-result2 = n1 - n2 * n3 ** ( n4 - n5 ) 
-puts "算術計算結果: #{result2}"
+number1, number2, number3, number4, number5 = 1, 2, 3, 4, 5
+result3 = number1 - number2 * number3 ** ( number4 - number5 )
+puts "算術計算結果: #{result3}"
