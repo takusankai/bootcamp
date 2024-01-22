@@ -54,7 +54,7 @@ puts "成人か？: #{is_adult}"
 # 論理否定 > べき乗 " ** " > 乗算・除算・剰余 > 加算・減算 > 比較 > 等・不等 > 論理積 > 三項演算子 > 論理和 > 代入
 
 # 論理系の演算子の結合順序の確認
-bool1, bool2, bool3, bool4 = true
+bool1, bool2, bool3, bool4 = true, true, true, true
 result1 = !( bool1 == !bool2 && bool3 || bool4 )
 puts "論理計算結果: #{result1}"
 
