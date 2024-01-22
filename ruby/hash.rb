@@ -23,7 +23,7 @@ p hash1 == hash2 # hash1 と hash2 が等しいので true が返る
 hash1[:Java] = 5 # "Java" の値を 5 に変更する
 p hash1 == hash2 # hash1 と hash2 が等しくないので false が返る
 
-# hash クラスのインスタンスメゾットの利用について
+# hash クラスのインスタンスメソッドの利用について
 
 # ハッシュの各要素に対して処理を行う
 person.each do |key, value|
