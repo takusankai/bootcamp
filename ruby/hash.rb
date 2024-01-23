@@ -2,7 +2,7 @@
 person = { name: "John", age: 21, city: "Tokyo" }
 
 # シンボルを使用した要素のアクセス、変更
-p person[:name] # 出力: John
+p person[:name] # => John
 person[:age] = 22
 
 # 要素を追加、削除
@@ -10,11 +10,11 @@ person[:occupation] = "Engineer"
 person.delete(:city)
 
 # ハッシュの操作
-p person.keys # 出力: [:name, :age, :occupation]
-p person.values # 出力: ["John", 22, "Engineer"]
-p person.empty? # 出力: false
-p person.key?(:name) # 出力: true
-p person.value?(22) # 出力: true
+p person.keys        # => [:name, :age, :occupation]
+p person.values      # => ["John", 22, "Engineer"]
+p person.empty?      # => false
+p person.key?(:name) # => true
+p person.value?(22)  # => true
 
 # ハッシュの比較
 hash1 = {"Ruby":1,"Rails":2,"PHP":3,"Java":4}
