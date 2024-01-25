@@ -61,7 +61,7 @@ puts "論理計算結果: #{result1}"
 # 論理系の演算子の結合順序の確認2
 # 上との違いは、bool4に"!"を加えて、実質的にfalseにしている点
 result2 = !( bool1 == !bool2 && bool3 || !bool4 )
-puts "（追記）論理計算結果: #{result2}"
+puts "論理計算結果: #{result2}"
 
 # 算術系の演算子の結合順序の確認
 number1, number2, number3, number4, number5 = 1, 2, 3, 4, 5
