@@ -12,7 +12,7 @@ module MyModule1
     puts "Hello, #{name}!"
   end
   # 定数を定義
-  Age = 21
+  AGE = 21
 end
 
 # moduleの例2を定義
@@ -42,7 +42,7 @@ object.extend MyModule2
 object.class_name            # => "my name is MyClass"
 
 # moduleの定数は呼び出せる
-puts MyModule1::Age          # => 21
+puts MyModule1::AGE          # => 21
 
 # module_functionで指定していない関数は呼び出せない
 # MyModule2.class_name
