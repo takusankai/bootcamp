@@ -1,60 +1,57 @@
 class WashingMachine
   def initialize
-    @stock_clothes = []
+    @stocks_clothes = []
   end
 
   def add_clothes(clothes)
-    if @stock_clothes.length < 30
-      @stock_clothes.push(clothes)
-      clothes.available = false
-      puts "#{clothes.name}を追加しました。"
+    if @stocks_clothes.length < 30
+      @stocks_clothes += clothes
+      clothes.each do |a_piece_of_clothes|
+        puts "#{a_piece_of_clothes.name}を追加しました。"
+      end
     else
-      puts "洗濯機の容量がmaxなので新しく追加することができません。"
+      puts "洗濯機の容量が上限を超えてしまうので、これらを新しく追加することはできません。"
     end
   end
 
   def remove_clothes(clothes)
-    @stock_clothes.delete(clothes)
-    clothes.available = true
-    puts "#{clothes.name}を取り出しました。"
+    @stocks_clothes -= clothes
+    clothes.each do |a_piece_of_clothes|
+      puts "#{a_piece_of_clothes.name}を取り出しました。"
+    end
   end
 
   def wash_clothes
-    @stock_clothes.each do |clothes|
+    @stocks_clothes.each do |clothes|
       clothes.cleanliness = true
       puts "#{clothes.name}が清潔になりました。"
     end
   end
 
-  def check_clothes
+  def output_stocks_status
     puts "以下が洗濯機の中の衣類の一覧です。"
-    @stock_clothes.each_with_index do |clothes, index|
+    @stocks_clothes.each_with_index do |clothes, index|
       puts "#{index} : #{clothes.name} : #{clothes.cleanliness ? '清潔' : '不清潔'}"
     end
-    puts "以上の#{@stock_clothes.length}点が洗濯機の中の衣類になります。"
+    puts "以上の#{@stocks_clothes.length}点が洗濯機の中の衣類になります。"
   end
 end
 
 class Clothes
-  attr_accessor :name, :cleanliness, :available
+  attr_accessor :name, :cleanliness
 
-  def initialize(name, cleanliness = true, available = true)
+  def initialize(name, cleanliness = true)
     @name = name
     @cleanliness = cleanliness
-    @available = available
   end
 
   def use
-    if (@cleanliness == true) && (@available == true)
+    if @cleanliness
       @cleanliness = false
       puts "#{@name}を使いました。"
     else
-      puts "現在#{@name}は使えません。"
+      puts "#{@name}は洗濯しないと使えません。"
     end
-  end
-
-  def is_wearable?
-    @cleanliness && @available
   end
 end
 
@@ -62,22 +59,26 @@ washing_machine = WashingMachine.new
 
 t_shirt_a = Clothes.new('TシャツA')
 t_shirt_b = Clothes.new('TシャツB')
+t_shirt_c = Clothes.new('TシャツC')
 
 t_shirt_a.use
 t_shirt_b.use
+t_shirt_c.use
 
-puts "TシャツAを着ることができますか？: #{t_shirt_a.is_wearable? ? 'はい' : 'いいえ'}"
-puts "TシャツBは着ることができますか？: #{t_shirt_b.is_wearable? ? 'はい' : 'いいえ'}"
+puts "TシャツAを清潔ですか？: #{t_shirt_a.cleanliness ? '清潔' : '不清潔'}"
+puts "TシャツBは清潔ですか？: #{t_shirt_b.cleanliness ? '清潔' : '不清潔'}"
+puts "TシャツCは清潔ですか？: #{t_shirt_c.cleanliness ? '清潔' : '不清潔'}"
 
-washing_machine.add_clothes(t_shirt_a)
-washing_machine.add_clothes(t_shirt_b)
+washing_machine.add_clothes([t_shirt_a])
+washing_machine.add_clothes([t_shirt_b, t_shirt_c])
 
-washing_machine.check_clothes
+washing_machine.output_stocks_status
 
 washing_machine.wash_clothes
 
-washing_machine.remove_clothes(t_shirt_a)
-washing_machine.remove_clothes(t_shirt_b)
+washing_machine.remove_clothes([t_shirt_a])
+washing_machine.remove_clothes([t_shirt_b, t_shirt_c])
 
-puts "TシャツAを着ることができますか？: #{t_shirt_a.is_wearable? ? 'はい' : 'いいえ'}"
-puts "TシャツBは着ることができますか？: #{t_shirt_b.is_wearable? ? 'はい' : 'いいえ'}"
+puts "TシャツAを着ることができますか？: #{t_shirt_a.cleanliness ? '清潔' : '不清潔'}"
+puts "TシャツBは着ることができますか？: #{t_shirt_b.cleanliness ? '清潔' : '不清潔'}"
+puts "TシャツCは着ることができますか？: #{t_shirt_c.cleanliness ? '清潔' : '不清潔'}"
