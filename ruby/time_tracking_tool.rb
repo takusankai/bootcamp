@@ -79,103 +79,102 @@ class Task
   end
 end
 
-def show_today_tasks
+class TaskList
   include FileIO
-  references = read_file
 
-  sum = 0
+  def initialize
+    @references = read_file
+  end
 
-  references.each do |reference|
-    reference.each do |key, value|
-      if value['end_date_time'] != nil
-        if Date.parse(value['start_date_time']) == Date.today
-          p "今日のreference: #{reference}"
-          start_time = Time.parse(value['start_date_time'])
-          end_time = Time.parse(value['end_date_time'])
-          culc = end_time - start_time
-          p "作業時間: #{culc}秒"
-          sum += culc
-        else
-          p "今日でないreference: #{reference}"
-        end
+  def each_task
+    @references.each do |reference|
+      reference.each do |key, value|
+        yield key, value
       end
     end
   end
 
-  time = Time.at(sum).utc
-  p("本日の累計作業時間: " + time.strftime("%H時間%M分%S秒"))
-end
+  def show_today_tasks
+    each_task do |key, value|
+      next if value['end_date_time'].nil?
 
-def show_weekly
-  include FileIO
-  references = read_file
-
-  sum = 0
-
-  references.each do |reference|
-    reference.each do |key, value|
-      if value['end_date_time'] != nil
-        # 今日から7日前までの日付を取得
-        if Date.parse(value['start_date_time']) >= Date.today - 7
-          p "今週のreference: #{reference}"
-          start_time = Time.parse(value['start_date_time'])
-          end_time = Time.parse(value['end_date_time'])
-          culc = end_time - start_time
-          p "作業時間: #{culc}秒"
-          sum += culc
-        else
-          p "今週でないreference: #{reference}"
-        end
+      if Date.parse(value['start_date_time']) == Date.today
+        start_time = Time.parse(value['start_date_time'])
+        end_time = Time.parse(value['end_date_time'])
+        culc = end_time - start_time
+        p "作業時間: #{culc}秒"
+        sum += culc
       end
     end
+
+    time = Time.at(sum).utc
+    p("本日の累計作業時間: " + time.strftime("%H時間%M分%S秒"))
   end
 
-  time = Time.at(sum).utc
-  p("今週の累計作業時間: " + time.strftime("%H時間%M分%S秒"))
+  def show_weekly
+    delete_old_file
 
-  delete_old_file
+    each_task do |key, value|
+      next if value['end_date_time'].nil?
+
+      if Date.parse(value['start_date_time']) >= Date.today - 7
+        start_time = Time.parse(value['start_date_time'])
+        end_time = Time.parse(value['end_date_time'])
+        culc = end_time - start_time
+        p "作業時間: #{culc}秒"
+        sum += culc
+      end
+    end
+
+    time = Time.at(sum).utc
+    p("今週の累計作業時間: " + time.strftime("%H時間%M分%S秒"))
+  end
 end
 
-def usage
-  puts "Usage: ruby time_tracking_tool.rb [options] [task_name]"
-  puts
-  puts "ruby time_tracking_tool.rb -s/--start [task_name] : タスクを開始します。"
-  puts "ruby time_tracking_tool.rb -f/--finish [task_name] : タスクを終了します。"
-  puts "ruby time_tracking_tool.rb -st : 今日のタスクを表示します。"
-  puts "ruby time_tracking_tool.rb -sw : 今週の作業時間を表示します。"
-end
+class ArgumentManager
+  def initialize(option:, task_name:)
+    @option = option
+    @task_name = task_name
+  end
 
-def main
-  case ARGV[0]
-  when '-s', '--start'
-    if ARGV[1] != nil
-      task_name = ARGV[1]
-      now_time = Time.now
-      task = Task.new(name: task_name, start_date_time: now_time)
+  def switch_option
+    case @option
+    when '-s', '--start'
+      if @task_name == nil
+        usage
+        return
+      end
+      task = Task.new(name: @task_name, start_date_time: Time.now)
       task.start
-      puts "開始したタスク名: #{task_name} 開始時間: #{now_time}"
       task.debug_log_all
-    else
-      usage
-    end
-  when '-f', '--finish'
-    if ARGV[1] != nil
-      task_name = ARGV[1]
-      now_time = Time.now
-      task = Task.new(name: task_name, end_date_time: now_time)
+    when '-f', '--finish'
+      if @task_name == nil
+        usage
+        return
+      end
+      task = Task.new(name: @task_name, end_date_time: Time.now)
       task.finish
-      puts "終了したタスク名: #{task_name} 終了時間: #{now_time}"
       task.debug_log_all
+    when '-st', '--show-today'
+      task_list = TaskList.new
+      task_list.show_today_tasks
+    when '-sw', '--show-week'
+      task_list = TaskList.new
+      task_list.show_weekly
     else
       usage
     end
-  when '-st', '--show-today'
-    show_today_tasks
-  when '-sw', '--show-week'
-    show_weekly
-  else
-    usage
+  end
+
+  def usage
+    puts "Usage: ruby time_tracking_tool.rb [options] [task_name]"
+    puts
+    puts "ruby time_tracking_tool.rb -s/--start [task_name] : タスクを開始します。"
+    puts "ruby time_tracking_tool.rb -f/--finish [task_name] : タスクを終了します。"
+    puts "ruby time_tracking_tool.rb -st : 今日のタスクを表示します。"
+    puts "ruby time_tracking_tool.rb -sw : 今週の作業時間を表示します。"
   end
 end
 
-main
+argument_manager = ArgumentManager.new(option: ARGV[0], task_name: ARGV[1])
+argument_manager.switch_option
