@@ -2,21 +2,32 @@ require 'date'
 require 'time'
 require 'json'
 
-REFERENCE_PATH="./references.json"
-
 module FileIO
+  REFERENCE='references.json'
+
   def read_file
-    if File.empty?('references.json')
-      []
-    else
-      JSON.parse(File.read('references.json'))
-    end
+    return [] if File.empty?(REFERENCE)
+    JSON.parse(File.read(REFERENCE))
   end
 
   def write_file(references)
-    File.open('references.json', 'w') do |file|
+    File.open(REFERENCE, 'w') do |file|
       file.write(JSON.pretty_generate(references))
     end
+  end
+
+  def delete_old_file
+    references = read_file
+
+    references.each do |reference|
+      reference.each do |key, value|
+        if Date.parse(value['start_date_time']) < Date.today - 7
+          references.delete(reference)
+        end
+      end
+    end
+
+    write_file(references)
   end
 
   def debug_log_all
@@ -34,7 +45,6 @@ end
 
 class Task
   include FileIO
-  attr_accessor :name, :start_date_time, :end_date_time
 
   def initialize(name: nil, start_date_time: nil, end_date_time: nil)
     @name = name
@@ -122,6 +132,8 @@ def show_weekly
 
   time = Time.at(sum).utc
   p("今週の累計作業時間: " + time.strftime("%H時間%M分%S秒"))
+
+  delete_old_file
 end
 
 def usage
