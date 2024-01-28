@@ -1,43 +1,40 @@
 require 'date'
 require 'time'
-require 'json'
 
 module FileIO
-  REFERENCE='references.json'
+  REFERENCE='references.csv'
+  require 'csv'
 
   def read_file
     return [] if File.empty?(REFERENCE)
-    JSON.parse(File.read(REFERENCE))
+    CSV.read(REFERENCE, headers: true)
   end
 
-  def write_file(references)
-    File.open(REFERENCE, 'w') do |file|
-      file.write(JSON.pretty_generate(references))
+  def write_file(data_list)
+    CSV.open(REFERENCE, 'w') do |csv|
+      csv << ["name", "start_date_time", "end_date_time"]
+      data_list.each { |row| csv << row }
     end
   end
 
   def delete_old_file
-    references = read_file
+    tasks = read_file
 
-    references.each do |reference|
-      reference.each do |key, value|
-        if Date.parse(value['start_date_time']) < Date.today - 7
-          references.delete(reference)
-        end
+    tasks.each do |task|
+      if Date.parse(task['start_date_time']) < Date.today - 7
+        tasks.delete(task)
       end
     end
 
-    write_file(references)
+    write_file(tasks)
   end
 
   def debug_log_all
-    references = read_file
+    tasks = read_file
 
-    references.each do |reference|
-      reference.each do |key, value|
-        if key == @name
-          p reference
-        end
+    tasks.each do |task|
+      if task['name'] == @name
+        p task
       end
     end
   end
@@ -53,29 +50,19 @@ class Task
   end
 
   def start
-    references = read_file
-
-    references << { @name => {
-      start_date_time: @start_date_time,
-      end_date_time: @end_date_time
-    }}
-
-    write_file(references)
+    tasks = read_file
+    tasks << [@name, @start_date_time, @end_date_time]
+    write_file(tasks)
   end
 
   def finish
-    references = read_file
-
-    references.each do |reference|
-      reference.each do |key, value|
-        if key == @name
-          value["end_date_time"] = @end_date_time
-          p value
-        end
+    tasks = read_file
+    tasks.each do |task|
+      if task['name'] == @name
+        task['end_date_time'] = @end_date_time
       end
     end
-
-    write_file(references)
+    write_file(tasks)
   end
 end
 
@@ -83,24 +70,18 @@ class TaskList
   include FileIO
 
   def initialize
-    @references = read_file
-  end
-
-  def each_task
-    @references.each do |reference|
-      reference.each do |key, value|
-        yield key, value
-      end
-    end
+    @tasks = read_file
   end
 
   def show_today_tasks
-    each_task do |key, value|
-      next if value['end_date_time'].nil?
+    sum = 0
 
-      if Date.parse(value['start_date_time']) == Date.today
-        start_time = Time.parse(value['start_date_time'])
-        end_time = Time.parse(value['end_date_time'])
+    @tasks.each do |task|
+      next if task['end_date_time'].nil?
+
+      if Date.parse(task['start_date_time']) == Date.today
+        start_time = Time.parse(task['start_date_time'])
+        end_time = Time.parse(task['end_date_time'])
         culc = end_time - start_time
         p "作業時間: #{culc}秒"
         sum += culc
@@ -113,13 +94,14 @@ class TaskList
 
   def show_weekly
     delete_old_file
+    sum = 0
 
-    each_task do |key, value|
-      next if value['end_date_time'].nil?
+    @tasks.each do |task|
+      next if task['end_date_time'].nil?
 
-      if Date.parse(value['start_date_time']) >= Date.today - 7
-        start_time = Time.parse(value['start_date_time'])
-        end_time = Time.parse(value['end_date_time'])
+      if Date.parse(task['start_date_time']) >= Date.today - 7
+        start_time = Time.parse(task['start_date_time'])
+        end_time = Time.parse(task['end_date_time'])
         culc = end_time - start_time
         p "作業時間: #{culc}秒"
         sum += culc
