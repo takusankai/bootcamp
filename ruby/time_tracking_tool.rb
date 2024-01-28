@@ -1,6 +1,3 @@
-require 'date'
-require 'time'
-
 module FileIO
   REFERENCE='references.csv'
   require 'csv'
@@ -45,6 +42,8 @@ class Task
 end
 
 class TaskList
+  require 'date'
+  require 'time'
   include FileIO
 
   def initialize
@@ -52,49 +51,45 @@ class TaskList
   end
 
   def show_today_tasks
-    sum = 0
-
+    today_sum_time = 0
     @tasks.each do |task|
-      next if task['end_date_time'].nil?
-
       if Date.parse(task['start_date_time']) == Date.today
-        start_time = Time.parse(task['start_date_time'])
-        end_time = Time.parse(task['end_date_time'])
-        culc = end_time - start_time
-        p "作業時間: #{culc}秒"
-        sum += culc
+        today_sum_time += culclate_task_time(task)
       end
     end
-
-    time = Time.at(sum).utc
-    p("本日の累計作業時間: " + time.strftime("%H時間%M分%S秒"))
+    display_HHMMSS(today_sum_time)
   end
 
   def show_weekly
     delete_old_file
-    sum = 0
-
+    weekly_sum_time = 0
     @tasks.each do |task|
-      next if task['end_date_time'].nil?
-
-      if Date.parse(task['start_date_time']) >= Date.today - 7
-        start_time = Time.parse(task['start_date_time'])
-        end_time = Time.parse(task['end_date_time'])
-        culc = end_time - start_time
-        p "作業時間: #{culc}秒"
-        sum += culc
-      end
+      weekly_sum_time += culclate_task_time(task)
     end
+    display_HHMMSS(weekly_sum_time)
+  end
 
-    time = Time.at(sum).utc
-    p("今週の累計作業時間: " + time.strftime("%H時間%M分%S秒"))
+  def culclate_task_time(task)
+    if task['end_date_time'].nil?
+      task_working_time = Time.now - Time.parse(task['start_date_time'])
+    end
+    start_time = Time.parse(task['start_date_time'])
+    end_time = Time.parse(task['end_date_time'])
+    task_working_time = end_time - start_time
+    p "タスク「#{task['name']}」の作業時間: #{task_working_time}秒"
+    return task_working_time
+  end
+
+  def display_HHMMSS(time)
+    hours = (time / 3600).floor
+    minutes = ((time % 3600) / 60).floor
+    seconds = (time % 60).floor
+    p("累計作業時間: #{hours}時間#{minutes}分#{seconds}秒")
   end
 
   def delete_old_file
-    @tasks.each do |task|
-      if Date.parse(task['start_date_time']) < Date.today - 7
-        @tasks.delete(task)
-      end
+    @tasks.delete_if do |task|
+      Date.parse(task['start_date_time']) <= Date.today - 7
     end
     write_file(@tasks)
   end
