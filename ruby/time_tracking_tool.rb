@@ -2,12 +2,12 @@ module FileIO
   REFERENCE='references.csv'
   require 'csv'
 
-  def read_file
+  def load_file
     return [] if File.empty?(REFERENCE)
     CSV.read(REFERENCE, headers: true)
   end
 
-  def write_file(data_list)
+  def record_file(data_list)
     CSV.open(REFERENCE, 'w') do |csv|
       csv << ["name", "start_date_time", "end_date_time"]
       data_list.each { |row| csv << row }
@@ -15,7 +15,7 @@ module FileIO
   end
 end
 
-class Task
+class TaskRecorder
   include FileIO
 
   def initialize(name: nil, start_date_time: nil, end_date_time: nil)
@@ -25,19 +25,17 @@ class Task
   end
 
   def start
-    tasks = read_file
+    tasks = load_file
+    return p "タスク「#{@name}」はすでに存在しています。" if tasks.any? { |task| task['name'] == @name }
     tasks << [@name, @start_date_time, @end_date_time]
-    write_file(tasks)
+    record_file(tasks)
   end
 
   def finish
-    tasks = read_file
-    tasks.each do |task|
-      if task['name'] == @name
-        task['end_date_time'] = @end_date_time
-      end
-    end
-    write_file(tasks)
+    tasks = load_file
+    return p "タスク「#{@name}」は存在しません。" if tasks.none? { |task| task['name'] == @name }
+    tasks.each { |task| task['end_date_time'] = @end_date_time if task['name'] == @name }
+    record_file(tasks)
   end
 end
 
@@ -47,7 +45,7 @@ class TaskList
   include FileIO
 
   def initialize
-    @tasks = read_file
+    @tasks = load_file
   end
 
   def show_today_tasks
@@ -91,7 +89,7 @@ class TaskList
     @tasks.delete_if do |task|
       Date.parse(task['start_date_time']) <= Date.today - 7
     end
-    write_file(@tasks)
+    record_file(@tasks)
   end
 end
 
@@ -121,7 +119,7 @@ class ArgumentManager
       display_usage
       return
     end
-    task = Task.new(name: @task_name, start_date_time: Time.now)
+    task = TaskRecorder.new(name: @task_name, start_date_time: Time.now)
     task.start
   end
 
@@ -130,7 +128,7 @@ class ArgumentManager
       display_usage
       return
     end
-    task = Task.new(name: @task_name, end_date_time: Time.now)
+    task = TaskRecorder.new(name: @task_name, end_date_time: Time.now)
     task.finish
   end
 
