@@ -26,14 +26,14 @@ class TaskRecorder
 
   def start
     tasks = load_file
-    return p "タスク「#{@name}」はすでに存在しています。" if tasks.any? { |task| task['name'] == @name }
+    return puts "タスク「#{@name}」はすでに存在しています。" if tasks.any? { |task| task['name'] == @name }
     tasks << [@name, @start_date_time, @end_date_time]
     record_file(tasks)
   end
 
   def finish
     tasks = load_file
-    return p "タスク「#{@name}」は存在しません。" if tasks.none? { |task| task['name'] == @name }
+    return puts "タスク「#{@name}」は存在しません。" if tasks.none? { |task| task['name'] == @name }
     tasks.each { |task| task['end_date_time'] = @end_date_time if task['name'] == @name }
     record_file(tasks)
   end
@@ -49,22 +49,36 @@ class TaskList
   end
 
   def show_today_tasks
-    today_sum_time = 0
+    puts "以下が、本日のタスクごと及び累計の作業時間です"
+    sum_today_time = 0
     @tasks.each do |task|
       if Date.parse(task['start_date_time']) == Date.today
-        today_sum_time += culclate_task_time(task)
+        task_time = culclate_task_time(task)
+        sum_today_time += task_time
+        print("タスク「#{task['name']}」の作業時間: ")
+        display_HHMMSS(task_time)
       end
     end
-    display_HHMMSS(today_sum_time)
+    print("本日の累計作業時間: ")
+    display_HHMMSS(sum_today_time)
   end
 
   def show_weekly
+    puts "以下、が今週の日付ごと及び累計の作業時間です"
     delete_old_file
-    weekly_sum_time = 0
+    sum_weekly_time = 0
+    time_each_day = Array.new(7, 0)
     @tasks.each do |task|
-      weekly_sum_time += culclate_task_time(task)
+      task_time = culclate_task_time(task)
+      sum_weekly_time += task_time
+      time_each_day[(Date.parse(task['start_date_time']) - Date.today).abs.to_i] += task_time
     end
-    display_HHMMSS(weekly_sum_time)
+    time_each_day.each_with_index do |time, index|
+      print("#{index}日前の作業時間: ")
+      display_HHMMSS(time)
+    end
+    print("今週の累計作業時間: ")
+    display_HHMMSS(sum_weekly_time)
   end
 
   def culclate_task_time(task)
@@ -74,7 +88,6 @@ class TaskList
     start_time = Time.parse(task['start_date_time'])
     end_time = Time.parse(task['end_date_time'])
     task_working_time = end_time - start_time
-    p "タスク「#{task['name']}」の作業時間: #{task_working_time}秒"
     return task_working_time
   end
 
@@ -82,7 +95,8 @@ class TaskList
     hours = (time / 3600).floor
     minutes = ((time % 3600) / 60).floor
     seconds = (time % 60).floor
-    p("累計作業時間: #{hours}時間#{minutes}分#{seconds}秒")
+    return puts("#{minutes}分#{seconds}秒") if hours == 0
+    puts("#{hours}時間#{minutes}分#{seconds}秒")
   end
 
   def delete_old_file
@@ -143,6 +157,7 @@ class ArgumentManager
   end
 
   def display_usage
+    puts "作業時間を管理するツール"
     puts "Usage: ruby time_tracking_tool.rb [options] [task_name]"
     puts
     puts "ruby time_tracking_tool.rb -s/--start [task_name] : タスクを開始します。"
