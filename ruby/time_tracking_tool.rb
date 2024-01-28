@@ -16,28 +16,6 @@ module FileIO
       data_list.each { |row| csv << row }
     end
   end
-
-  def delete_old_file
-    tasks = read_file
-
-    tasks.each do |task|
-      if Date.parse(task['start_date_time']) < Date.today - 7
-        tasks.delete(task)
-      end
-    end
-
-    write_file(tasks)
-  end
-
-  def debug_log_all
-    tasks = read_file
-
-    tasks.each do |task|
-      if task['name'] == @name
-        p task
-      end
-    end
-  end
 end
 
 class Task
@@ -111,6 +89,15 @@ class TaskList
     time = Time.at(sum).utc
     p("今週の累計作業時間: " + time.strftime("%H時間%M分%S秒"))
   end
+
+  def delete_old_file
+    @tasks.each do |task|
+      if Date.parse(task['start_date_time']) < Date.today - 7
+        @tasks.delete(task)
+      end
+    end
+    write_file(@tasks)
+  end
 end
 
 class ArgumentManager
@@ -122,33 +109,47 @@ class ArgumentManager
   def switch_option
     case @option
     when '-s', '--start'
-      if @task_name == nil
-        usage
-        return
-      end
-      task = Task.new(name: @task_name, start_date_time: Time.now)
-      task.start
-      task.debug_log_all
+      start_fanction
     when '-f', '--finish'
-      if @task_name == nil
-        usage
-        return
-      end
-      task = Task.new(name: @task_name, end_date_time: Time.now)
-      task.finish
-      task.debug_log_all
+      finish_fanction
     when '-st', '--show-today'
-      task_list = TaskList.new
-      task_list.show_today_tasks
+      show_today_fanction
     when '-sw', '--show-week'
-      task_list = TaskList.new
-      task_list.show_weekly
+      show_weekly_fanction
     else
-      usage
+      display_usage
     end
   end
 
-  def usage
+  def start_fanction
+    if @task_name == nil
+      display_usage
+      return
+    end
+    task = Task.new(name: @task_name, start_date_time: Time.now)
+    task.start
+  end
+
+  def finish_fanction
+    if @task_name == nil
+      display_usage
+      return
+    end
+    task = Task.new(name: @task_name, end_date_time: Time.now)
+    task.finish
+  end
+
+  def show_today_fanction
+    task_list = TaskList.new
+    task_list.show_today_tasks
+  end
+
+  def show_weekly_fanction
+    task_list = TaskList.new
+    task_list.show_weekly
+  end
+
+  def display_usage
     puts "Usage: ruby time_tracking_tool.rb [options] [task_name]"
     puts
     puts "ruby time_tracking_tool.rb -s/--start [task_name] : タスクを開始します。"
