@@ -49,24 +49,24 @@ class TaskList
     @tasks = load_file
   end
 
-  def show_today_tasks
+  def show_today
     puts "以下が、本日のタスクごと及び累計の作業時間です"
-    sum_today_time = 0
-    @tasks.each do |task|
+    sum_today_time = @tasks.reduce(0) do |sum, task|
       if Date.parse(task['start_date_time']) == Date.today
         task_time = culclate_task_time(task)
-        sum_today_time += task_time
+        sum += task_time
         print("タスク「#{task['name']}」の作業時間: ")
         print_hms_style(task_time)
       end
+      sum
     end
     print("本日の累計作業時間: ")
     print_hms_style(sum_today_time)
   end
 
-  def show_weekly
+  def show_week
     puts "以下が、今週の日付ごと及び累計の作業時間です"
-    sum_weekly_time, time_each_day = @tasks.reduce([0, Array.new(7, 0)]) do |(sum, times), task|
+    sum_week_time, time_each_day = @tasks.reduce([0, Array.new(7, 0)]) do |(sum, times), task|
       if Date.parse(task['start_date_time']) > Date.today - 7
         task_time = culclate_task_time(task)
         sum += task_time
@@ -79,7 +79,7 @@ class TaskList
       print_hms_style(daily_time)
     end
     print("今週の累計作業時間: ")
-    print_hms_style(sum_weekly_time)
+    print_hms_style(sum_week_time)
   end
 
   def culclate_task_time(task)
@@ -113,7 +113,7 @@ class ArgumentManager
     when '-st', '--show-today'
       show_today_function
     when '-sw', '--show-week'
-      show_weekly_function
+      show_week_function
     else
       display_usage
     end
@@ -139,12 +139,12 @@ class ArgumentManager
 
   def show_today_function
     task_list = TaskList.new
-    task_list.show_today_tasks
+    task_list.show_today
   end
 
-  def show_weekly_function
+  def show_week_function
     task_list = TaskList.new
-    task_list.show_weekly
+    task_list.show_week
   end
 
   def display_usage
