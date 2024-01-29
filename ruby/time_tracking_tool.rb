@@ -1,6 +1,10 @@
+require 'date'
+require 'time'
+require 'csv'
+
 module FileIO
   REFERENCE='references.csv'
-  require 'csv'
+
 
   def load_file
     return [] if File.empty?(REFERENCE)
@@ -40,8 +44,6 @@ class TaskRecorder
 end
 
 class TaskList
-  require 'date'
-  require 'time'
   include FileIO
 
   def initialize
@@ -56,29 +58,30 @@ class TaskList
         task_time = culclate_task_time(task)
         sum_today_time += task_time
         print("タスク「#{task['name']}」の作業時間: ")
-        display_HHMMSS(task_time)
+        print_hms_style(task_time)
       end
     end
     print("本日の累計作業時間: ")
-    display_HHMMSS(sum_today_time)
+    print_hms_style(sum_today_time)
   end
 
   def show_weekly
-    puts "以下、が今週の日付ごと及び累計の作業時間です"
-    delete_old_file
+    puts "以下が、今週の日付ごと及び累計の作業時間です"
     sum_weekly_time = 0
     time_each_day = Array.new(7, 0)
     @tasks.each do |task|
-      task_time = culclate_task_time(task)
-      sum_weekly_time += task_time
-      time_each_day[(Date.parse(task['start_date_time']) - Date.today).abs.to_i] += task_time
+      if Date.parse(task['start_date_time']) > Date.today - 7
+        task_time = culclate_task_time(task)
+        sum_weekly_time += task_time
+        time_each_day[(Date.parse(task['start_date_time']) - Date.today).abs.to_i] += task_time
+      end
     end
     time_each_day.each_with_index do |time, index|
       print("#{index}日前の作業時間: ")
-      display_HHMMSS(time)
+      print_hms_style(time)
     end
     print("今週の累計作業時間: ")
-    display_HHMMSS(sum_weekly_time)
+    print_hms_style(sum_weekly_time)
   end
 
   def culclate_task_time(task)
@@ -88,22 +91,15 @@ class TaskList
     start_time = Time.parse(task['start_date_time'])
     end_time = Time.parse(task['end_date_time'])
     task_working_time = end_time - start_time
-    return task_working_time
+    task_working_time
   end
 
-  def display_HHMMSS(time)
-    hours = (time / 3600).floor
-    minutes = ((time % 3600) / 60).floor
-    seconds = (time % 60).floor
+  def print_hms_style(second_style_time)
+    hours = (second_style_time / 3600).floor
+    minutes = ((second_style_time % 3600) / 60).floor
+    seconds = (second_style_time % 60).floor
     return puts("#{minutes}分#{seconds}秒") if hours == 0
     puts("#{hours}時間#{minutes}分#{seconds}秒")
-  end
-
-  def delete_old_file
-    @tasks.delete_if do |task|
-      Date.parse(task['start_date_time']) <= Date.today - 7
-    end
-    record_file(@tasks)
   end
 end
 
@@ -116,19 +112,19 @@ class ArgumentManager
   def switch_option
     case @option
     when '-s', '--start'
-      start_fanction
+      start_function
     when '-f', '--finish'
-      finish_fanction
+      finish_function
     when '-st', '--show-today'
-      show_today_fanction
+      show_today_function
     when '-sw', '--show-week'
-      show_weekly_fanction
+      show_weekly_function
     else
       display_usage
     end
   end
 
-  def start_fanction
+  def start_function
     if @task_name == nil
       display_usage
       return
@@ -137,7 +133,7 @@ class ArgumentManager
     task.start
   end
 
-  def finish_fanction
+  def finish_function
     if @task_name == nil
       display_usage
       return
@@ -146,12 +142,12 @@ class ArgumentManager
     task.finish
   end
 
-  def show_today_fanction
+  def show_today_function
     task_list = TaskList.new
     task_list.show_today_tasks
   end
 
-  def show_weekly_fanction
+  def show_weekly_function
     task_list = TaskList.new
     task_list.show_weekly
   end
