@@ -35,7 +35,9 @@ class TaskRecorder
   def finish
     tasks = load_file
     return puts "タスク「#{@name}」は存在しません。" if tasks.none? { |task| task['name'] == @name }
-    tasks.each { |task| task['end_date_time'] = Time.now if task['name'] == @name }
+    target_task = tasks.find { |task| task['name'] == @name }
+    return puts "タスク「#{@name}」はすでに終了しています。" if target_task['end_date_time'] != nil
+    target_task['end_date_time'] = Time.now
     record_file(tasks)
   end
 end
@@ -64,13 +66,13 @@ class TaskList
 
   def show_weekly
     puts "以下が、今週の日付ごと及び累計の作業時間です"
-    sum_weekly_time, time_each_day = @tasks.reduce([0, Array.new(7, 0)]) do |(sum, seven_days), task|
+    sum_weekly_time, time_each_day = @tasks.reduce([0, Array.new(7, 0)]) do |(sum, times), task|
       if Date.parse(task['start_date_time']) > Date.today - 7
         task_time = culclate_task_time(task)
         sum += task_time
-        seven_days[(Date.parse(task['start_date_time']) - Date.today).abs.to_i] += task_time
+        times[(Date.parse(task['start_date_time']) - Date.today).abs.to_i] += task_time
       end
-      [sum, seven_days]
+      [sum, times]
     end
     time_each_day.each_with_index do |daily_time, index|
       print("#{index}日前の作業時間: ")
@@ -82,7 +84,7 @@ class TaskList
 
   def culclate_task_time(task)
     if task['end_date_time'].nil?
-      task_working_time = Time.now - Time.parse(task['start_date_time'])
+      return task_working_time = Time.now - Time.parse(task['start_date_time'])
     end
     task_working_time = Time.parse(task['end_date_time']) - Time.parse(task['start_date_time'])
   end
