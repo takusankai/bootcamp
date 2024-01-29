@@ -1,11 +1,11 @@
 class WashingMachine
   def initialize
-    @stocks_clothes = []
+    @clothes_array = []
   end
 
   def add_clothes(clothes)
-    if @stocks_clothes.length < 30
-      @stocks_clothes += clothes
+    if @clothes_array.length < 30
+      @clothes_array += clothes
       clothes.each do |a_piece_of_clothes|
         puts "#{a_piece_of_clothes.name}を追加しました。"
       end
@@ -15,30 +15,31 @@ class WashingMachine
   end
 
   def remove_clothes(clothes)
-    @stocks_clothes -= clothes
+    @clothes_array -= clothes
     clothes.each do |a_piece_of_clothes|
       puts "#{a_piece_of_clothes.name}を取り出しました。"
     end
   end
 
   def wash_clothes
-    @stocks_clothes.each do |clothes|
+    @clothes_array.each do |clothes|
       clothes.cleanliness = true
       puts "#{clothes.name}が清潔になりました。"
     end
   end
 
-  def output_stocks_status
+  def output_array_status
     puts "以下が洗濯機の中の衣類の一覧です。"
-    @stocks_clothes.each_with_index do |clothes, index|
+    @clothes_array.each_with_index do |clothes, index|
       puts "#{index} : #{clothes.name} : #{clothes.cleanliness ? '清潔' : '不清潔'}"
     end
-    puts "以上の#{@stocks_clothes.length}点が洗濯機の中の衣類になります。"
+    puts "以上の#{@clothes_array.length}点が洗濯機の中の衣類になります。"
   end
 end
 
 class Clothes
-  attr_accessor :name, :cleanliness
+  attr_reader :name
+  attr_accessor :cleanliness
 
   def initialize(name, cleanliness = true)
     @name = name
@@ -65,20 +66,20 @@ t_shirt_a.use
 t_shirt_b.use
 t_shirt_c.use
 
-puts "TシャツAを清潔ですか？: #{t_shirt_a.cleanliness ? '清潔' : '不清潔'}"
+puts "TシャツAは清潔ですか？: #{t_shirt_a.cleanliness ? '清潔' : '不清潔'}"
 puts "TシャツBは清潔ですか？: #{t_shirt_b.cleanliness ? '清潔' : '不清潔'}"
 puts "TシャツCは清潔ですか？: #{t_shirt_c.cleanliness ? '清潔' : '不清潔'}"
 
 washing_machine.add_clothes([t_shirt_a])
 washing_machine.add_clothes([t_shirt_b, t_shirt_c])
 
-washing_machine.output_stocks_status
+washing_machine.output_array_status
 
 washing_machine.wash_clothes
 
 washing_machine.remove_clothes([t_shirt_a])
 washing_machine.remove_clothes([t_shirt_b, t_shirt_c])
 
-puts "TシャツAを着ることができますか？: #{t_shirt_a.cleanliness ? '清潔' : '不清潔'}"
-puts "TシャツBは着ることができますか？: #{t_shirt_b.cleanliness ? '清潔' : '不清潔'}"
-puts "TシャツCは着ることができますか？: #{t_shirt_c.cleanliness ? '清潔' : '不清潔'}"
+puts "TシャツAは清潔ですか？: #{t_shirt_a.cleanliness ? '清潔' : '不清潔'}"
+puts "TシャツBは清潔ですか？: #{t_shirt_b.cleanliness ? '清潔' : '不清潔'}"
+puts "TシャツCは清潔ですか？: #{t_shirt_c.cleanliness ? '清潔' : '不清潔'}"
