@@ -3,10 +3,10 @@ class WashingMachine
     @clothes_array = []
   end
 
-  def add_clothes(clothes)
+  def add_clothes(clothings)
     if @clothes_array.length < 30
-      @clothes_array += clothes
-      clothes.each do |a_piece_of_clothes|
+      @clothes_array += clothings
+      clothings.each do |a_piece_of_clothes|
         puts "#{a_piece_of_clothes.name}を追加しました。"
       end
     else
@@ -14,9 +14,9 @@ class WashingMachine
     end
   end
 
-  def remove_clothes(clothes)
-    @clothes_array -= clothes
-    clothes.each do |a_piece_of_clothes|
+  def remove_clothes(clothings)
+    @clothes_array -= clothings
+    clothings.each do |a_piece_of_clothes|
       puts "#{a_piece_of_clothes.name}を取り出しました。"
     end
   end
