@@ -15,5 +15,6 @@ p string_range.include? 'z' # => false
 
 # 日付の範囲指定と含まれているかの判定
 require 'date'
-p((Date.parse("2024-01-01")..Date.parse("2024-01-31")).include?(Date.parse("2024-01-19"))) # => true
-p((Date.parse("2024-01-01")..Date.parse("2024-01-31")).include?(Date.parse("2024-02-01"))) # => false
+date_range = Date.parse('2024-01-01')..Date.parse('2024-01-31')
+p date_range.include?(Date.parse('2024-01-19')) # => true
+p date_range.include?(Date.parse('2024-02-01')) # => false
