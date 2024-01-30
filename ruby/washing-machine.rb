@@ -3,7 +3,7 @@ class WashingMachine
     @clothings = []
   end
 
-  def add_clothing(clothings)
+  def add_clothings(clothings)
     if @clothings.length < 30
       @clothings += clothings
       clothings.each do |clothing|
@@ -14,14 +14,14 @@ class WashingMachine
     end
   end
 
-  def remove_clothing(clothings)
+  def remove_clothings(clothings)
     @clothings -= clothings
     clothings.each do |clothing|
       puts "#{clothing.name}を取り出しました。"
     end
   end
 
-  def wash_clothing
+  def wash_clothings
     @clothings.each do |clothing|
       clothing.cleanliness = true
       puts "#{clothing.name}が清潔になりました。"
@@ -70,15 +70,15 @@ puts "TシャツAは清潔ですか？: #{t_shirt_a.cleanliness ? '清潔' : '�
 puts "TシャツBは清潔ですか？: #{t_shirt_b.cleanliness ? '清潔' : '不清潔'}"
 puts "TシャツCは清潔ですか？: #{t_shirt_c.cleanliness ? '清潔' : '不清潔'}"
 
-washing_machine.add_clothing([t_shirt_a])
-washing_machine.add_clothing([t_shirt_b, t_shirt_c])
+washing_machine.add_clothings([t_shirt_a])
+washing_machine.add_clothings([t_shirt_b, t_shirt_c])
 
 washing_machine.output_array_status
 
-washing_machine.wash_clothing
+washing_machine.wash_clothings
 
-washing_machine.remove_clothing([t_shirt_a])
-washing_machine.remove_clothing([t_shirt_b, t_shirt_c])
+washing_machine.remove_clothings([t_shirt_a])
+washing_machine.remove_clothings([t_shirt_b, t_shirt_c])
 
 puts "TシャツAは清潔ですか？: #{t_shirt_a.cleanliness ? '清潔' : '不清潔'}"
 puts "TシャツBは清潔ですか？: #{t_shirt_b.cleanliness ? '清潔' : '不清潔'}"
