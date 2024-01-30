@@ -56,7 +56,7 @@ class TaskList
         task_time = culclate_task_time(task)
         print("タスク「#{task['name']}」の作業時間: ")
         print_hms_style(task_time)
-        return task_time
+        task_time
       end
       0
     end
@@ -138,11 +138,19 @@ class ArgumentManager
   end
 
   def show_today_function
+    if @task_name != nil
+      display_usage
+      return
+    end
     task_list = TaskList.new
     task_list.show_today
   end
 
   def show_week_function
+    if @task_name != nil
+      display_usage
+      return
+    end
     task_list = TaskList.new
     task_list.show_week
   end
