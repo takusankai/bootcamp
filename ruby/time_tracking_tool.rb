@@ -3,15 +3,15 @@ require 'time'
 require 'csv'
 
 module TaskLogAccessor
-  TASK_LOG='task_log.csv'
+  TASK_LOG_FILE_NAME='task_log.csv'
 
   def load_file
-    return [] if File.empty?(TASK_LOG)
-    CSV.read(TASK_LOG, headers: true)
+    return [] if File.empty?(TASK_LOG_FILE_NAME)
+    CSV.read(TASK_LOG_FILE_NAME, headers: true)
   end
 
   def record_file(data_list)
-    CSV.open(TASK_LOG, 'w') do |csv|
+    CSV.open(TASK_LOG_FILE_NAME, 'w') do |csv|
       csv << ["name", "start_date_time", "end_date_time"]
       data_list.each { |row| csv << row }
     end
@@ -21,7 +21,7 @@ end
 class TaskRecorder
   include TaskLogAccessor
 
-  def initialize(name: nil)
+  def initialize(name)
     @name = name
   end
 
@@ -84,9 +84,9 @@ class TaskList
 
   def culclate_task_time(task)
     if task['end_date_time'].nil?
-      return task_working_time = Time.now - Time.parse(task['start_date_time'])
+      return Time.now - Time.parse(task['start_date_time'])
     end
-    task_working_time = Time.parse(task['end_date_time']) - Time.parse(task['start_date_time'])
+    Time.parse(task['end_date_time']) - Time.parse(task['start_date_time'])
   end
 
   def print_hms_style(second_style_time)
@@ -124,7 +124,7 @@ class ArgumentManager
       display_usage
       return
     end
-    task = TaskRecorder.new(name: @task_name)
+    task = TaskRecorder.new(@task_name)
     task.start
   end
 
@@ -133,7 +133,7 @@ class ArgumentManager
       display_usage
       return
     end
-    task = TaskRecorder.new(name: @task_name)
+    task = TaskRecorder.new(@task_name)
     task.finish
   end
 
