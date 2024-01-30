@@ -52,7 +52,7 @@ class TaskList
   def show_today
     puts "以下が、本日のタスクごと及び累計の作業時間です"
     sum_today_time = @tasks.reduce(0) do |sum, task|
-      if Date.parse(task['start_date_time']) == Date.today
+      if Time.parse(task['start_date_time']).to_date == Date.today
         task_time = culclate_task_time(task)
         sum += task_time
         print("タスク「#{task['name']}」の作業時間: ")
@@ -67,10 +67,10 @@ class TaskList
   def show_week
     puts "以下が、今週の日付ごと及び累計の作業時間です"
     sum_week_time, time_each_day = @tasks.reduce([0, Array.new(7, 0)]) do |(sum, times), task|
-      if Date.parse(task['start_date_time']) > Date.today - 7
+      if Time.parse(task['start_date_time']).to_date > Date.today - 7
         task_time = culclate_task_time(task)
         sum += task_time
-        times[(Date.parse(task['start_date_time']) - Date.today).abs.to_i] += task_time
+        times[(Time.parse(task['start_date_time']).to_date - Date.today).abs.to_i] += task_time
       end
       [sum, times]
     end
