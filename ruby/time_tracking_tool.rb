@@ -99,12 +99,14 @@ class TaskList
 end
 
 class ArgumentManager
-  def initialize(option:, task_name:)
+  def initialize(option:, task_name:, others: [])
     @option = option
     @task_name = task_name
+    @others = others
   end
 
   def switch_option
+    return display_usage if @others != []
     case @option
     when '-s', '--start'
       start_function
@@ -166,5 +168,5 @@ class ArgumentManager
   end
 end
 
-argument_manager = ArgumentManager.new(option: ARGV[0], task_name: ARGV[1])
+argument_manager = ArgumentManager.new(option: ARGV[0], task_name: ARGV[1], others: (ARGV[2..-1] || []))
 argument_manager.switch_option
