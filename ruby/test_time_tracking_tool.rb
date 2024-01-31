@@ -42,6 +42,10 @@ if ARGV[0] != nil
   p("↑-st引数多" + "-" * 50)
   ArgumentManager.new(option: "-sw", task_name: first_task).switch_option # -sw の引数が多い
   p("↑-sw引数多" + "-" * 50)
+  ArgumentManager.new(option: "-sw", task_name: first_task, others: ["xxx"]).switch_option
+  p("↑過剰引数（3つ）" + "-" * 50)                                          # 3つ引数を渡されている
+  ArgumentManager.new(option: "-sw", task_name: first_task, others: ["xxx", "yyy", "zzz"]).switch_option
+  p("↑過剰引数（5つ）" + "-" * 50)                                          # 3つ以上引数を渡されている
 
   # 例外のコメントを表示する
   ArgumentManager.new(option: "-s", task_name: second_task).switch_option # 開始するタスク名が被っている
