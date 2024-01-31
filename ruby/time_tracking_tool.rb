@@ -52,13 +52,11 @@ class TaskList
   def show_today
     puts "以下が、本日のタスクごと及び累計の作業時間です"
     sum_today_time = @tasks.sum do |task|
-      if Time.parse(task['start_date_time']).to_date == Date.today
-        task_time = culclate_task_time(task)
-        print("タスク「#{task['name']}」の作業時間: ")
-        print_hms_style(task_time)
-        task_time
-      end
-      0
+      next 0 unless Time.parse(task['start_date_time']).to_date == Date.today
+      task_time = culclate_task_time(task)
+      print("タスク「#{task['name']}」の作業時間: ")
+      print_hms_style(task_time)
+      task_time
     end
     print("本日の累計作業時間: ")
     print_hms_style(sum_today_time)
