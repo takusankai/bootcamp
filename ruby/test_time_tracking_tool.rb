@@ -11,25 +11,21 @@ if (first_task == second_task) || (first_task == third_task) || (second_task == 
   puts "生成したタスク名が重複しました。再実行してください。"
   exit
 end
-
 p("↑生成したタスク名" + "-" * 50)
 
-
-# （順当な入力）1つ目のタスクの情報を記録し読み出せるかを確認
+# タスクの情報を記録し読み出し作業で問題が起こらないかを確認
 ArgumentManager.new(option: "-s", task_name: first_task).switch_option
+ArgumentManager.new(option: "-s", task_name: first_task).switch_option    # 直後に同じタスクを開始しようとする
+ArgumentManager.new(option: "-s", task_name: second_task).switch_option   # 他のタスクを開始する
 sleep(2) # 作業時間として2秒間待つ
 ArgumentManager.new(option: "-f", task_name: first_task).switch_option
-ArgumentManager.new(option: "-st", task_name: nil).switch_option
-ArgumentManager.new(option: "-sw", task_name: nil).switch_option
+ArgumentManager.new(option: "-f", task_name: first_task).switch_option    # 直後に同じタスクを終了しようとする
+ArgumentManager.new(option: "-st", task_name: nil).switch_option          # 終了していないタスクがある状態で表示
+ArgumentManager.new(option: "-sw", task_name: nil).switch_option          # 終了していないタスクがある状態で表示
 p("-" * 50)
-
-# （順当な入力）タスクの情報が複数になった場合の挙動を確認
-ArgumentManager.new(option: "-s", task_name: second_task).switch_option
-sleep(2) # 作業時間として2秒間待つ
 ArgumentManager.new(option: "-f", task_name: second_task).switch_option
-ArgumentManager.new(option: "-st", task_name: nil).switch_option
-ArgumentManager.new(option: "-sw", task_name: nil).switch_option
-p("-" * 50)
+ArgumentManager.new(option: "-st", task_name: nil).switch_option          # 終了していないタスクがない状態で表示
+ArgumentManager.new(option: "-sw", task_name: nil).switch_option          # 終了していないタスクがない状態で表示
 
 # 想定される引数以外を渡した場合の挙動を確認
 # usageを表示する
