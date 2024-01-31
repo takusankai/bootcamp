@@ -52,13 +52,11 @@ class TaskList
   def show_today
     puts "以下が、本日のタスクごと及び累計の作業時間です"
     sum_today_time = @tasks.sum do |task|
-      if Time.parse(task['start_date_time']).to_date == Date.today
-        task_time = culclate_task_time(task)
-        print("タスク「#{task['name']}」の作業時間: ")
-        print_hms_style(task_time)
-        task_time
-      end
-      0
+      next 0 unless Time.parse(task['start_date_time']).to_date == Date.today
+      task_time = culclate_task_time(task)
+      print("タスク「#{task['name']}」の作業時間: ")
+      print_hms_style(task_time)
+      task_time
     end
     print("本日の累計作業時間: ")
     print_hms_style(sum_today_time)
@@ -66,17 +64,13 @@ class TaskList
 
   def show_week
     puts "以下が、今週の日付ごと及び累計の作業時間です"
-    time_each_day = @tasks.reduce(Array.new(7, 0)) do |times, task|
-      if Time.parse(task['start_date_time']).to_date > Date.today - 7
-        task_time = culclate_task_time(task)
-        times[(Time.parse(task['start_date_time']).to_date - Date.today).abs.to_i] += task_time
+    sum_week_time = ((Date.today - 6)..Date.today).sum do |date|
+      daily_task_time = @tasks.sum do |task|
+        Time.parse(task['start_date_time']).to_date == date ? culclate_task_time(task) : 0
       end
-      times
-    end
-    sum_week_time = time_each_day.sum
-    time_each_day.each_with_index do |task_time, index|
-      print("#{index}日前の作業時間: ")
-      print_hms_style(task_time)
+      print("#{date.strftime('%m/%d')}の作業時間: ")
+      print_hms_style(daily_task_time)
+      daily_task_time
     end
     print("今週の累計作業時間: ")
     print_hms_style(sum_week_time)
